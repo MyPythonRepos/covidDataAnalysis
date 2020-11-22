@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../covidDataAnalysis/.idea/covidDataAnalysis.iml" filepath="$PROJECT_DIR$/../covidDataAnalysis/.idea/covidDataAnalysis.iml" />
+    </modules>
+  </component>
+</project>
