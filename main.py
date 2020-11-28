@@ -1,14 +1,19 @@
+from flask import Flask, request, render_template, session, redirect
 import pandas as pd
 import requests
 from datetime import datetime
-from os import  path
+from os import path
 from os import listdir
+from os import remove
 
 
 def read_file(file):
     print(file)
-    data = pd.read_csv(file, delimiter=',')
-    print(data)
+    data = pd.DataFrame(pd.read_csv(file, delimiter=','))
+    data_mask = data['Country_EN'] == 'Malawi'
+    filtered_data = data[data['Country_EN'] == 'Spain']
+    print(filtered_data)
+
 
 def print_files():
     content = listdir('files')
@@ -16,8 +21,16 @@ def print_files():
         print(f)
 
 
+def delete_files():
+    files = listdir('files/')
+    for f in files:
+        remove('files/'+f)
+        print('File removed')
+
+
 # Descarga los ficheros necesarios para trabajar
 def download_files():
+    delete_files()
     now = datetime.now()
     file_type = ['confirmed', 'recovered', 'deaths']
     url = 'https://covid19tracking.narrativa.com/csv/'
@@ -34,4 +47,5 @@ def download_files():
 if __name__ == '__main__':
     download_files()
     print_files()
-    read_file('files/confirmed_2020_11_22.csv')
+    now = datetime.now()
+    read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
