@@ -31,12 +31,12 @@ def delete_files():
 # Descarga los ficheros necesarios para trabajar
 def download_files():
     delete_files()
-    now = datetime.now()
+    date_now = datetime.now()
     file_type = ['confirmed', 'recovered', 'deaths']
     url = 'https://covid19tracking.narrativa.com/csv/'
-    for type in file_type:
-        r = requests.get(url + type + '.csv')
-        file = 'files/' + type + now.date().strftime("_%Y_%m_%d") + '.csv'
+    for one_type in file_type:
+        r = requests.get(url + one_type + '.csv')
+        file = 'files/' + one_type + date_now.date().strftime("_%Y_%m_%d") + '.csv'
         if not path.exists(file):
             with open(file, 'wb') as f:
                 f.write(r.content)
