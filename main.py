@@ -8,11 +8,11 @@ from os import remove
 
 
 def read_file(file):
-    print(file)
     data = pd.DataFrame(pd.read_csv(file, delimiter=','))
-    data_mask = data['Country_EN'] == 'Malawi'
-    filtered_data = data[data['Country_EN'] == 'Spain']
-    print(filtered_data)
+    data_mask = data['Country_EN'] == 'Spain'
+    filtered_data = data[data_mask]
+    print(filtered_data.loc[:, '2020-11-01':'2020-11-30'])
+    return filtered_data.agg .filter(items=['Region', '2020-11-01', '2020-11-30'])
 
 
 def print_files():
@@ -43,9 +43,19 @@ def download_files():
                 print('Created file ' + file)
 
 
+app = Flask(__name__)
+
+
+@app.route('/', methods=("POST", "GET"))
+def html_table():
+    file = read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
+    return render_template('simple.html',  tables=[file.to_html(classes='data')], titles=file.columns.values)
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     download_files()
     print_files()
     now = datetime.now()
     read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
+    app.run('0.0.0.0', 5000, debug=True)
