@@ -1,10 +1,21 @@
 from flask import Flask, request, render_template, session, redirect
 import pandas as pd
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from os import path
 from os import listdir
 from os import remove
+
+
+def get_items():
+    hoy = datetime.now()
+    primer_dia = hoy.replace(day=1)
+    items = ['Region']
+    while primer_dia.day < hoy.day:
+        items.append(primer_dia.date().strftime("%Y-%m-%d"))
+        primer_dia = primer_dia + timedelta(days=1)
+    items.append(hoy.date().strftime("%Y-%m-%d"))
+    return items
 
 
 def read_file(file):
@@ -12,7 +23,8 @@ def read_file(file):
     data_mask = data['Country_EN'] == 'Spain'
     filtered_data = data[data_mask]
     print(filtered_data.loc[:, '2020-11-01':'2020-11-30'])
-    return filtered_data.agg .filter(items=['Region', '2020-11-01', '2020-11-30'])
+    print(get_items())
+    return filtered_data.filter(items=get_items())
 
 
 def print_files():
@@ -57,5 +69,5 @@ if __name__ == '__main__':
     download_files()
     print_files()
     now = datetime.now()
-    read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
+    # read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
     app.run('0.0.0.0', 5000, debug=True)
