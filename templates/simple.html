@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
-        {% for table in tables %}
-            <p style="text-align:center;">{{titles[loop.index]}}</p>
-            {{ table|safe }}
-        {% endfor %}
-        <p style="text-align:center;"> graphic charts </p>
-        <img src="/plot.png" alt="my plot">
+    {% for table in tables %}
+        <p style="text-align:center;">{{titles[loop.index]}}</p>
+        {{ table|safe }}
+    {% endfor %}
+    <p style="text-align:center;"> graphic charts </p>
+    <img src="/plot.png" alt="my plot">
 </body>
 </html>

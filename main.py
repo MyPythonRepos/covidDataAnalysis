@@ -24,7 +24,6 @@ def get_items():
 def read_file(file):
     data = pd.DataFrame(pd.read_csv(file, delimiter=','))
     data_mask = data['Country_EN'] == 'Spain'
-    data_mask = data['Region'] == 'Canarias'
     filtered_data = data[data_mask]
     filtered_data.drop(columns=["Country_EN", "Country_IT", "Country_ES"])
     return filtered_data.filter(items=get_items())
