@@ -1,10 +1,13 @@
-from flask import Flask, request, render_template, session, redirect
+from flask import Flask, render_template
+from datetime import datetime, timedelta
+from os import path, listdir, remove
 import pandas as pd
 import requests
-from datetime import datetime, timedelta
-from os import path
-from os import listdir
-from os import remove
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from flask import Response
+import io
+import random
 
 
 def get_items():
@@ -21,9 +24,9 @@ def get_items():
 def read_file(file):
     data = pd.DataFrame(pd.read_csv(file, delimiter=','))
     data_mask = data['Country_EN'] == 'Spain'
+    data_mask = data['Region'] == 'Canarias'
     filtered_data = data[data_mask]
-    print(filtered_data.loc[:, '2020-11-01':'2020-11-30'])
-    print(get_items())
+    filtered_data.drop(columns=["Country_EN", "Country_IT", "Country_ES"])
     return filtered_data.filter(items=get_items())
 
 
@@ -60,14 +63,35 @@ app = Flask(__name__)
 
 @app.route('/', methods=("POST", "GET"))
 def html_table():
+    now = datetime.now()
     file = read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
-    return render_template('simple.html',  tables=[file.to_html(classes='data')], titles=file.columns.values)
+    return render_template('simple.html', tables=[file.to_html(classes='data')], titles=file.columns.values)
+
+
+@app.route('/plot.png')
+def plot_png():
+    fig = create_figure()
+    output = io.BytesIO()
+    FigureCanvas(fig).print_png(output)
+    return Response(output.getvalue(), mimetype='image/png')
+
+
+def create_figure():
+    fig = Figure(figsize=[20, 5])
+    axis = fig.add_subplot(1, 1, 1)
+    now = datetime.now()
+    file = read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
+    file = file.drop(columns='Region')
+    xs = file.columns
+    ys = []
+    for l in list(file.columns):
+        ys.append(file.iloc[0][l])
+    axis.plot(xs, ys)
+    return fig
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     download_files()
     print_files()
-    now = datetime.now()
-    # read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
-    app.run('0.0.0.0', 5000, debug=True)
+    app.run('0.0.0.0', 5002, debug=True)

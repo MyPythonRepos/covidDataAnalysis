@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Datos sobre COVID</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
-
-{% for table in tables %}
+        {% for table in tables %}
             <p style="text-align:center;">{{titles[loop.index]}}</p>
             {{ table|safe }}
-{% endfor %}
-
+        {% endfor %}
+        <p style="text-align:center;"> graphic charts </p>
+        <img src="/plot.png" alt="my plot">
 </body>
 </html>
