@@ -7,7 +7,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from flask import Response
 import io
-import random
 
 
 def get_items():
@@ -27,6 +26,16 @@ def read_file(file):
     filtered_data = data[data_mask]
     filtered_data.drop(columns=["Country_EN", "Country_IT", "Country_ES"])
     return filtered_data.filter(items=get_items())
+
+
+def confirmed_cases_by_region(region):
+    now = datetime.now()
+    data = pd.DataFrame(pd.read_csv('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv'))
+    data_mask = data['Country_EN'] == 'Spain'
+    data_mask = data['Region'] == region
+    confirmed_cases = data[data_mask]
+    confirmed_cases.drop(columns=["Country_EN", "Country_IT", "Country_ES"])
+    return confirmed_cases.filter(items=get_items())
 
 
 def print_files():
@@ -79,13 +88,20 @@ def create_figure():
     fig = Figure(figsize=[20, 5])
     axis = fig.add_subplot(1, 1, 1)
     now = datetime.now()
-    file = read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
+    # file = read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
+    file = confirmed_cases_by_region('Ceuta')
     file = file.drop(columns='Region')
     xs = file.columns
     ys = []
     for l in list(file.columns):
         ys.append(file.iloc[0][l])
     axis.plot(xs, ys)
+    file = confirmed_cases_by_region('Melilla')
+    file = file.drop(columns='Region')
+    zs = []
+    for l in list(file.columns):
+        zs.append(file.iloc[0][l])
+    axis.plot(xs, zs)
     return fig
 
 
