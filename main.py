@@ -1,11 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, Response
 from datetime import datetime, timedelta
 from os import path, listdir, remove
 import pandas as pd
 import requests
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from flask import Response
+# from flask import Response
 import io
 
 
@@ -31,7 +31,7 @@ def read_file(file):
 def confirmed_cases_by_region(region):
     now = datetime.now()
     data = pd.DataFrame(pd.read_csv('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv'))
-    data_mask = data['Country_EN'] == 'Spain'
+    # data_mask = data['Country_EN'] == 'Spain'
     data_mask = data['Region'] == region
     confirmed_cases = data[data_mask]
     confirmed_cases.drop(columns=["Country_EN", "Country_IT", "Country_ES"])
@@ -87,20 +87,20 @@ def plot_png():
 def create_figure():
     fig = Figure(figsize=[20, 5])
     axis = fig.add_subplot(1, 1, 1)
-    now = datetime.now()
+    # now = datetime.now()
     # file = read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
-    file = confirmed_cases_by_region('Ceuta')
+    file = confirmed_cases_by_region('Canarias')
     file = file.drop(columns='Region')
     xs = file.columns
     ys = []
-    for l in list(file.columns):
-        ys.append(file.iloc[0][l])
+    for element in list(file.columns):
+        ys.append(file.iloc[0][element])
     axis.plot(xs, ys)
-    file = confirmed_cases_by_region('Melilla')
+    file = confirmed_cases_by_region('Madrid')
     file = file.drop(columns='Region')
     zs = []
-    for l in list(file.columns):
-        zs.append(file.iloc[0][l])
+    for element in list(file.columns):
+        zs.append(file.iloc[0][element])
     axis.plot(xs, zs)
     return fig
 
