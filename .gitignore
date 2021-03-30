@@ -24,6 +24,8 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.idea/
+
 MANIFEST
 
 # PyInstaller
@@ -138,5 +140,4 @@ dmypy.json
 cython_debug/
 
 # Carpetas adicionales
-files/
-venv/
+files/*
