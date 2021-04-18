@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title style="text-align:center;">Datos Covid por Provincias</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <h1 style="text-align:center">Datos por Provincia COVID-19</h1>
+    <table class="mainTable">
+    {% for provincia in provincias.items() | batch(5)  %}
+        <tr class="tr">
+        {% for key,value in provincia %}
+            <td class="td"><a class="button" href="{{ url_for('mostrar_datos', provincia=key) }}"> {{ value }} </a></td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
+</body>
+</html>

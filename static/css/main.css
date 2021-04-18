@@ -1,3 +1,4 @@
+
 .row {
   display: flex;
   flex-direction: column;
@@ -9,11 +10,9 @@
 }
 
 table.dataframe, .dataframe th, .dataframe td {
-  width: 75%;
   border: none;
   border-bottom: 1px solid #C8C8C8;
   border-collapse: collapse;
-
   padding: 10px;
   margin-bottom: 40px;
   font-size: 0.9em;
@@ -38,6 +37,45 @@ tr:nth-child(even)	{
 }
 
 tr:hover {
+  background-color: #ffff99;
+  text-align: right;
+}
+
+
+.button {
+  background-color: #008CBA; /* Blue */
+  border: none;
+  color: white;
+  margin: 5%;
+  padding: 15px 32px;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  width: 50%;
+}
+
+.mainTable {
+    border: none;
+    border-collapse: collapse;
+    padding: 10px;
+    margin-bottom: 40px;
+    font-size: 0.9em;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 70%;
+}
+
+.td {
+    background-color: #ffffff;
+}
+
+.tr {
+    color: black;
+    text-align: center !important;
+}
+
+.td:hover {
   background-color: #ffff99;
   text-align: right;
 }
