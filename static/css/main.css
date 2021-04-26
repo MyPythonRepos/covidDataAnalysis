@@ -41,8 +41,7 @@ tr:hover {
   text-align: right;
 }
 
-
-.button {
+.table_button {
   background-color: #008CBA; /* Blue */
   border: none;
   color: white;
@@ -52,6 +51,28 @@ tr:hover {
   display: inline-block;
   font-size: 16px;
   width: 50%;
+}
+
+.button {
+    color: #fff !important;
+    text-transform: uppercase;
+    background: #60a3bc;
+    padding: 20px;
+    border-radius: 50px;
+    display: inline-block;
+    border: none !important;
+    margin: auto;
+    display: block;
+    font-size: 16px;
+    width: 50%;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+}
+
+.button:hover{
+    background-color:#4095c6;
+    color: #000 !important;
 }
 
 .mainTable {
@@ -78,4 +99,10 @@ tr:hover {
 .td:hover {
   background-color: #ffff99;
   text-align: right;
+}
+
+img {
+  width: 60%;
+  margin: auto;
+  display: block;
 }

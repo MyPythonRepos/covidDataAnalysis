@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>404 Page not found</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" type= "text/css" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <p> La página que buscas no existe.</p>
+    <a class="button" href="{{ url_for('index') }}">INICIO</a>
+</body>
+</html>

@@ -4,6 +4,8 @@ from os import path, listdir, remove, replace
 import pandas as pd
 import requests
 import locale
+import matplotlib
+from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import io
@@ -12,6 +14,8 @@ import json
 app = Flask(__name__)
 PROVINCIAS = ''
 locale.setlocale(locale.LC_ALL, 'es-ES')
+GRAPHICS_FOLDER = path.join('static', 'graphics')
+app.config['GRAPHICS_FOLDER'] = GRAPHICS_FOLDER
 
 
 # def get_items():
@@ -58,6 +62,7 @@ def save_files(file, r):
 
 
 def backup_files(file):
+    # TODO guardar únicamente X número de copias, borrando los más antiguos
     now = datetime.now()
     replace(file, 'files/casos_diagnostico_provincia.' + now.strftime("%Y%m%d_%H%M%S"))
 
@@ -70,8 +75,7 @@ def download_files():
     if not path.exists(file):
         save_files(file, r)
     else:
-        # TODO crear función backup ficheros y sobreescribir ficheros
-        backup_files(file)
+        # backup_files(file)
         save_files(file, r)
 
 
@@ -93,16 +97,24 @@ def get_nombre_provincia(prov):
 
 
 @app.route('/', methods=("POST", "GET"))
-def html_table():
+def index():
     PROVINCIAS=leer_provincias()
     return render_template('index.html', provincias=PROVINCIAS)
 
 
-@app.route('/datos/prov=<provincia>', methods=("POST", "GET"))
-def mostrar_datos(provincia):
-    now = datetime.now()
-    file, mes = read_file('files/casos_diagnostico_provincia.csv', provincia)
-    return render_template('datos_por_provincia.html', tables=[file.to_html(classes='data')], titles=get_nombre_provincia(provincia), mes=mes)
+@app.route('/datos/prov=<provincia>/tipo=<tipo_datos>', methods=("POST", "GET"))
+def mostrar_datos(provincia, tipo_datos):
+    if tipo_datos == 'default':
+        file, mes = read_file('files/casos_diagnostico_provincia.csv', provincia)
+        return render_template('datos_por_provincia.html', tables=[file.to_html(classes='data')],
+                               titles=get_nombre_provincia(provincia), mes=mes, tipo_datos=tipo_datos, key=provincia)
+    else:
+        file, mes = read_file('files/casos_diagnostico_provincia.csv', provincia)
+        create_figure(provincia, file)
+        full_filename = path.join(app.config['GRAPHICS_FOLDER'], 'graph.png')
+        # return Response(output.getvalue(), mimetype='image/png')
+        return render_template('datos_por_provincia.html', img=full_filename,
+                        titles=get_nombre_provincia(provincia), mes=mes, tipo_datos=tipo_datos, key=provincia)
 
 
 # @app.route('/plot.png')
@@ -113,25 +125,31 @@ def mostrar_datos(provincia):
 #     return Response(output.getvalue(), mimetype='image/png')
 
 
-# def create_figure():
-#     fig = Figure(figsize=[20, 5])
-#     axis = fig.add_subplot(1, 1, 1)
-#     # now = datetime.now()
-#     # file = read_file('files/confirmed' + now.date().strftime("_%Y_%m_%d") + '.csv')
-#     file = confirmed_cases_by_region('Canarias')
-#     file = file.drop(columns='Region')
-#     xs = file.columns
-#     ys = []
-#     for element in list(file.columns):
-#         ys.append(file.iloc[0][element])
-#     axis.plot(xs, ys)
-#     file = confirmed_cases_by_region('Madrid')
-#     file = file.drop(columns='Region')
-#     zs = []
-#     for element in list(file.columns):
-#         zs.append(file.iloc[0][element])
-#     axis.plot(xs, zs)
-#     return fig
+def create_figure(provincia, file):
+    fig = plt.figure()
+    ax = fig.add_axes([0.1, 0.2, 0.8, 0.8])
+    dates = file['fecha']
+    cases = file['num_casos']
+    ax.bar(dates, cases)
+    plt.xticks(rotation=90)
+    plt.savefig("static/graphics/graph.png")
+    plt.close()
+
+
+##########################################################
+# FUNCIONES RELATIVAS AL FUNCIONAMIENTO DE LA APLICACIÓN #
+##########################################################
+@app.after_request
+def add_header(response):
+    # Se establece max_age a 0 para que se refresque el gráfico en al vista
+    response.cache_control.max_age = 0
+    return response
+
+
+# Handlers de errores de la aplicación.
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
 # Press the green button in the gutter to run the script.

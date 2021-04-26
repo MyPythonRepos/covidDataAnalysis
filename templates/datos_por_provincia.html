@@ -8,11 +8,22 @@
 </head>
 <body>
     <h1 style="text-align:center;"> Casos confirmados durante {{ mes | upper }}</h1>
-    {% for table in tables %}
-        <p style="text-align:center;"><strong>Provincia: {{ titles }}</strong></p>
-        {{ table|safe }}
-    {% endfor %}
-<!--    <p style="text-align:center;"> Gráfico de comparación Canarias - Madrid </p>
-    <img src="/plot.png" alt="my plot" width="100%">  -->
+
+    {% if tipo_datos == 'default' %}
+        <a class="button" href="{{ url_for('mostrar_datos', provincia=key, tipo_datos='grafico') }}">
+            ver gráfico
+        </a>
+        {% for table in tables %}
+            <p style="text-align:center;"><strong>Provincia: {{ titles }}</strong></p>
+            {{ table|safe }}
+        {% endfor %}
+    {% else %}
+        <a class="button" href="{{ url_for('mostrar_datos', provincia=key, tipo_datos='default') }}">
+            ver tabla
+        </a>
+        <p style="text-align:center;"><strong>Número de casos en {{ titles }}</strong></p>
+        <img src="{{ url_for('static', filename = 'graphics/graph.png') }}" alt="my plot">
+    {% endif %}
+    <a class="button" href="{{ url_for('index') }}">INICIO</a>
 </body>
 </html>

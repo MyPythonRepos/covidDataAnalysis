@@ -141,3 +141,5 @@ cython_debug/
 
 # Carpetas adicionales
 files/*
+!files/*.json
+!files/*.csv

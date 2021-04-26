@@ -12,7 +12,7 @@
     {% for provincia in provincias.items() | batch(5)  %}
         <tr class="tr">
         {% for key,value in provincia %}
-            <td class="td"><a class="button" href="{{ url_for('mostrar_datos', provincia=key) }}"> {{ value }} </a></td>
+            <td class="td"><a class="table_button" href="{{ url_for('mostrar_datos', provincia=key, tipo_datos='default') }}"> {{ value }} </a></td>
         {% endfor %}
         </tr>
     {% endfor %}
