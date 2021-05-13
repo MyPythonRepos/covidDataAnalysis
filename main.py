@@ -18,16 +18,6 @@ GRAPHICS_FOLDER = path.join('static', 'graphics')
 app.config['GRAPHICS_FOLDER'] = GRAPHICS_FOLDER
 
 
-# def get_items():
-#     hoy = datetime.now()
-#     primer_dia = hoy.replace(day=1)
-#     items = ['fecha', 'num_casos', 'num_casos_prueba_pcr', 'num_casos_prueba_ag']
-#     while primer_dia.day < hoy.day:
-#         items.append(primer_dia.date().strftime("%Y-%m-%d"))
-#         primer_dia = primer_dia + timedelta(days=1)
-#     items.append(hoy.date().strftime("%Y-%m-%d"))
-#     return items
-
 # Por defecto, se muestran los datos del mes en curso para la provincia solicitada
 def read_file(file, provincia):
     data = pd.DataFrame(pd.read_csv(file, delimiter=','))
@@ -38,14 +28,9 @@ def read_file(file, provincia):
                          & (data['fecha'].between(inicio_periodo.date().strftime("%Y-%m-%d"),
                                                   fin_periodo.date().strftime("%Y-%m-%d")))]
     filtered_data = filtered_data[['fecha', 'num_casos', 'num_casos_prueba_pcr', 'num_casos_prueba_ag']]
+    filtered_data.rename(columns={'num_casos' : 'Num. casos', 'num_casos_prueba_pcr': 'Num. casos PCR', 'num_casos_prueba_ag': 'Num. casos AG'}, inplace=True)
     filtered_data.index = range(1, len(filtered_data.index)+1)
     return filtered_data, mes
-
-
-# def print_files():
-#     content = listdir('files')
-#     for f in content:
-#         print(f)
 
 
 def delete_files():
@@ -110,26 +95,18 @@ def mostrar_datos(provincia, tipo_datos):
                                titles=get_nombre_provincia(provincia), mes=mes, tipo_datos=tipo_datos, key=provincia)
     else:
         file, mes = read_file('files/casos_diagnostico_provincia.csv', provincia)
-        create_figure(provincia, file)
+        create_figure(file)
         full_filename = path.join(app.config['GRAPHICS_FOLDER'], 'graph.png')
         # return Response(output.getvalue(), mimetype='image/png')
         return render_template('datos_por_provincia.html', img=full_filename,
                         titles=get_nombre_provincia(provincia), mes=mes, tipo_datos=tipo_datos, key=provincia)
 
 
-# @app.route('/plot.png')
-# def plot_png():
-#     fig = create_figure()
-#     output = io.BytesIO()
-#     FigureCanvas(fig).print_png(output)
-#     return Response(output.getvalue(), mimetype='image/png')
-
-
-def create_figure(provincia, file):
+def create_figure(file):
     fig = plt.figure()
     ax = fig.add_axes([0.1, 0.2, 0.8, 0.8])
     dates = file['fecha']
-    cases = file['num_casos']
+    cases = file['Num. casos']
     ax.bar(dates, cases)
     plt.xticks(rotation=90)
     plt.savefig("static/graphics/graph.png")
@@ -141,7 +118,7 @@ def create_figure(provincia, file):
 ##########################################################
 @app.after_request
 def add_header(response):
-    # Se establece max_age a 0 para que se refresque el gráfico en al vista
+    # Se establece max_age a 0 para que no se guarde en cache el gráfico
     response.cache_control.max_age = 0
     return response
 
